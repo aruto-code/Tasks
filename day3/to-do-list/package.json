@@ -14,14 +14,17 @@
   "dependencies": {
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-boilerplate": "bitbucket:kimiajourney/express-boilerplate",
     "express-validator": "^7.2.1",
     "ioredis": "^5.6.1",
     "joi": "^17.13.3",
+    "logger": "bitbucket:kimiajourney/logger",
     "mongoose": "^8.15.1",
     "nodemon": "^3.1.10",
     "redis": "^5.1.1"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "jest": "^29.7.0",
     "supertest": "^7.1.1"
   }

@@ -1,30 +1,58 @@
+const { promClient } = require('express-boilerplate/monitoring/metrics');
 const redis = require('../redisClient');
 const Todo = require("../models/todo.model")
+const todoCreatedCounter = new promClient.Counter({
+  name: 'todos_created_total',
+  help: 'Total number of todos created',
+});
+const todoFetchedCounter = new promClient.Counter({
+  name: 'todos_fetched_total',
+  help: 'Total number of todos fetched',
+});
+
+const todoUpdatedCounter = new promClient.Counter({
+  name: 'todos_updated_total',
+  help: 'Total number of todos updated',
+});
+
+const todoDeletedCounter = new promClient.Counter({
+  name: 'todos_deleted_total',
+  help: 'Total number of todos deleted',
+});
+
+const todoFetchDuration = new promClient.Histogram({
+  name: 'todo_fetch_duration_seconds',
+  help: 'Duration of fetching todos from DB',
+  buckets: [0.1, 0.5, 1, 2, 5]
+});
+
 // Get all todos
 const getTodos = async (req, res) => {
-  try {
-    // Check cache
-    const cachedTodos = await redis.get('todos');
+  const endTimer = todoFetchDuration.startTimer(); // ⏱️ Start timer
 
+  try {
+    const cachedTodos = await redis.get('todos');
     if (cachedTodos) {
+      todoFetchedCounter.inc(); // increment metric
+      endTimer(); // ⏱️ Stop timer
       return res.status(200).json({
         source: 'cache',
         data: JSON.parse(cachedTodos)
       });
     }
 
-    // If not in cache, fetch from DB
     const todos = await Todo.find();
-
-    // Store in cache with TTL = 60 seconds
     await redis.set('todos', JSON.stringify(todos), 'EX', 60);
 
+    todoFetchedCounter.inc();
     res.status(200).json({
       source: 'database',
       data: todos
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch todos' });
+  } finally {
+    endTimer(); // ensure timer ends even on failure
   }
 };
 
@@ -51,6 +79,7 @@ const createTodo = async (req, res) => {
     });
     await newTodo.save();
     await redis.del('todos');
+    todoCreatedCounter.inc(); // increment counter after saving
     res.status(201).json(newTodo);
   } catch (err) {
     res.status(500).json({ message: 'Failed to create todo', error: err.message });
@@ -68,7 +97,8 @@ const updateTodo = async (req, res) => {
     );
     if (!todo) return res.status(404).json({ message: 'Todo not found' });
 
-    await redis.del('todos'); // 🚨 Invalidate cache
+    await redis.del('todos');
+    todoUpdatedCounter.inc(); // 🔢
 
     res.status(200).json(todo);
   } catch (err) {
@@ -88,6 +118,7 @@ const deleteTodo = async (req, res) => {
 
     // Step 3: Invalidate the Redis cache so we don't return stale data on future GET requests
     await redis.del('todos'); // 🚨 Very important line
+    todoDeletedCounter.inc();
 
     // Step 4: Send success response to client
     res.status(200).json({ message: 'Todo deleted successfully' });

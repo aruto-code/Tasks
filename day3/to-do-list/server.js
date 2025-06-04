@@ -1,9 +1,9 @@
 // server.js
+require('dotenv').config();
+require('express-boilerplate/monitoring/tracing');
 const mongoose = require('mongoose');
 const app = require('./app');
-const dotenv = require('dotenv');
-
-dotenv.config();
+ // 💡 traces HTTP, MongoDB, Redis, etc.
 
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://mongo:27017/todolist';

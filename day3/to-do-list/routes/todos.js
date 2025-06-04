@@ -1,5 +1,6 @@
-const express = require('express');
-const router = express.Router();
+const { createRouter, wrapAsync } = require('express-boilerplate');
+const router = createRouter();
+
 const validate = require('../middlewares/validate');
 const { todoSchema } = require('../validators/todoValidator');
 const {
@@ -10,11 +11,26 @@ const {
   deleteTodo
 } = require('../controllers/todosController');
 
-// Routes
-router.get('/', getTodos);
-router.get('/:id', getTodoById);
-router.post('/', validate(todoSchema), createTodo);
-router.put('/:id', validate(todoSchema), updateTodo); 
-router.delete('/:id', deleteTodo);
+/**
+ * Routes for To-Do API
+ * 
+ * - wrapAsync is used to automatically catch and forward async errors
+ * - validate middleware is used to validate request bodies against the todoSchema
+ */
+
+// GET /todos - Get all todos (async error handled)
+router.get('/', wrapAsync(getTodos));
+
+// GET /todos/:id - Get todo by ID (async error handled)
+router.get('/:id', wrapAsync(getTodoById));
+
+// POST /todos - Create a new todo (validate request body, async error handled)
+router.post('/', validate(todoSchema), wrapAsync(createTodo));
+
+// PUT /todos/:id - Update existing todo (validate request body, async error handled)
+router.put('/:id', validate(todoSchema), wrapAsync(updateTodo));
+
+// DELETE /todos/:id - Delete todo by ID (async error handled)
+router.delete('/:id', wrapAsync(deleteTodo));
 
 module.exports = router;

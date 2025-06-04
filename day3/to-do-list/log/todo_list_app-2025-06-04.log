@@ -1,0 +1,8 @@
+[2025-06-04 04:00:51.439 AM] info: 🔧 Starting Express To-Do App
+[2025-06-04 04:00:51.443 AM] warn: 🔍 Memory usage at startup {"usage":{"rss":132624384,"heapTotal":76468224,"heapUsed":49774208,"external":21263676,"arrayBuffers":18546179}}
+[2025-06-04 04:00:51.446 AM] info:  Express application setup complete
+[2025-06-04 04:07:53.493 AM] error: - GET /metrics 403 - 10.836 ms - message: -
+[2025-06-04 04:07:55.475 AM] info: - GET / 304 - 23.383 ms
+[2025-06-04 04:07:55.530 AM] info: - GET /favicon.ico 204 - 0.983 ms
+[2025-06-04 04:07:57.288 AM] info: - GET / 200 - 1.832 ms
+[2025-06-04 04:07:57.315 AM] info: - GET /favicon.ico 204 - 0.450 ms

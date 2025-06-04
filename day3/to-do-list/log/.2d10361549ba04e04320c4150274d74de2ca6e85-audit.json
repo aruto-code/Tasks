@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 30
+    },
+    "auditLog": "log\\.2d10361549ba04e04320c4150274d74de2ca6e85-audit.json",
+    "files": [
+        {
+            "date": 1748950844761,
+            "name": "log\\todo_list_app-2025-06-03.log",
+            "hash": "5bc8fde36fcf585265b26308acd70fdceff42b77e87a54c0d6509e0b466cc2b2"
+        }
+    ],
+    "hashType": "sha256"
+}
